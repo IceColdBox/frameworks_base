@@ -355,6 +355,8 @@ final class DisplayPowerController {
     private boolean mTwilightChanged;
     private boolean mAutoBrightnessSettingsChanged;
 
+    private final LightsService.Light mButtonlight;
+    
     /**
      * Creates the display power controller.
      */
@@ -371,6 +373,8 @@ final class DisplayPowerController {
         mCallbackHandler = callbackHandler;
 
         mLights = lights;
+        mButtonlight = mLights.getLight(LightsService.LIGHT_ID_BUTTONS);
+        
         mTwilight = twilight;
         mSensorManager = sensorManager;
         mDisplayManager = displayManager;
@@ -811,6 +815,11 @@ final class DisplayPowerController {
                 }
             }
         }
+
+        /* button light */
+        boolean buttonlight_on = wantScreenOn(mPowerRequest.screenState) && (mPowerRequest.screenState != DisplayPowerRequest.SCREEN_STATE_DIM); 
+       
+        mButtonlight.setBrightness(buttonlight_on ? 1 : 0);
 
         // Report whether the display is ready for use.
         // We mostly care about the screen state here, ignoring brightness changes
